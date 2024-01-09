@@ -36,6 +36,16 @@ const character = {name: 'Jack Sparrow', age: 25}
 	'Soy Jon Snow, tengo 24 años y me gustan los lobos.'
 //!------------------------------------------------------------------------
 
-const firstName = "Jon";
-const lastName = 'Snow';
-const age = 24;
+        const firstName = "Jon";
+        const lastName = 'Snow';
+        const age = 24;
+
+"Soy $¨[firstName, lastName], tengo $¨{age} y me gustan los lobos"
+
+//!------------------------------------------------------------------------
+//? 1.3 Dado el siguiente javascript, imprime con un console.log la suma del precio de ambos juguetes.
+        const toy1 = {name: 'Buss myYear', price: 19};
+        const toy2 = {name: 'Rallo mcKing', price: 29};
+//!------------------------------------------------------------------------
+
+console.log(toy1 + toy2)
