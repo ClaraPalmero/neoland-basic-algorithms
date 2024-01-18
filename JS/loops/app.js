@@ -1,6 +1,9 @@
-/*//*--------------------------------Iteración #1: Usa includes----------------------------------------------------------
+//*--------------------------------Iteración #1: Usa includes----------------------------------------------------------
 
 //! Haz un bucle y muestra por consola todos aquellos valores del array que incluyan la palabra "Camiseta". Usa la función .***includes*** de javascript.
+
+
+//!   ERROR - MIRAR
 
 const products = [
   "Camiseta de Pokemon",
@@ -11,17 +14,22 @@ const products = [
   "AC/DC Camiseta",
 ];
 
-for (let i = 0; i < products.length; i++) {
-  if (products[i].includes("Camiseta")) {
-    console.log("🚀 ~ products[i]:", products[i]);
+const productCamiseta = [];
+
+for (let wordCamiseta of products) {
+  if (wordCamiseta.includes("camiseta")) {
+    productCamiseta.push(wordCamiseta); //-----> lanzamos a "productCamiseta" el resultado de la condición de "wordcamiseta"
   }
 }
+console.log(productCamiseta);
 
 //* -----------------------------Iteración #2: Condicionales avanzados-----------------------------------------------------------
 
 //! Comprueba en cada uno de los usuarios que tenga al menos dos trimestres aprobados y añade la propiedad ***isApproved*** a true o false en consecuencia.
 //! Una vez lo tengas compruébalo con un ***console.log***.
 
+
+//!  FALTA
 
 const alumns = [
   { name: "Pepe Viruela", T1: false, T2: false, T3: true },
@@ -31,22 +39,24 @@ const alumns = [
   { name: "Raquel Benito", T1: true, T2: true, T3: true },
 ];
 
-const modified = (array) => {
-    return alumns.forEach((alumn) => {
-    let contador = 0
-  for (let clave in alumn) {
-    if (alumn[clave] === true){
-        contador++
-    }
-  }
-  if (contador >= 2) {
-  return {...alumn, isApproved: true}
-  } else { 
-    return {...alumn, isApproved: false};
-})
+const alumnAprob = []
+for( let trimestresAprobados of alumns){
+  if( )
 }
-const result = modificarAlumns(alumns)
-console.log(result)*/
+
+/***Concepto para ejercicio Iteración#2 ( Sergio ).**
+
+Para poder recorrer un array con objetos deberás, recorrerlo con un array y por cada posición añadir una nueva propiedad a cada objeto.
+
+- Pista: ( para añadir la propiedad dentro del objeto )
+
+```jsx
+//Pista a la hora de recorrer un array y poder meter en el objeto una nueva propiedad
+//deberás asignar a ese array por indice una propiedad tal que así
+
+nombreLista[indice].nombrePropiedad = valor;*/  
+
+
 
 //*-----------------------------------Iteración #3: Probando For...of-----------------------------------------------------------------------
 
@@ -111,11 +121,12 @@ const toys = [
   { id: 40, name: "El gato felix" },
 ];
 
-const arrayToysSinGato = [];
+const arrayToysSinGato = []; //------------> "caja" contenedora donde irá a parar el resultado de los nuevos parámetros
 
 for (let toy of toys) {
   if (!toy.name.includes("gato")) {
-    arrayToysSinGato.push(toy);
+    //-------> ! excluye
+    arrayToysSinGato.push(toy); //---------> push envia a "caja" el resultado del búcle
   }
 }
 console.log(arrayToysSinGato);
@@ -124,7 +135,7 @@ console.log(arrayToysSinGato);
 
 //! Usa un bucle **for...of** para recorrer todos los juguetes y añade los que tengan más de 15 ventas (sellCount) al array popularToys. Imprímelo por consola. Puedes usar este array:
 
-const popularToys = [];
+const popularToys = []; // ---------> array vacío que albergará los juguetes con más de 15 ventas
 const toys2 = [
   { id: 5, name: "Buzz MyYear", sellCount: 10 },
   { id: 11, name: "Action Woman", sellCount: 24 },
@@ -132,3 +143,12 @@ const toys2 = [
   { id: 40, name: "El gato con Guantes", sellCount: 8 },
   { id: 40, name: "El gato felix", sellCount: 35 },
 ];
+
+for (let toys3 of toys2) {
+  // ----> creo bucle para que me recorra el array
+  if (toys3.sellCount > 15) {
+    //-------> creamos la condicion: de la variable "toys3", clave "sellCount" solo los que sean mayores de 15
+    popularToys.push(toys3); //-----> lanzamos al array vacío la variable creda en el búcle
+  }
+}
+console.log(popularToys);
