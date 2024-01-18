@@ -86,7 +86,7 @@ console.log(resultado2);
 //! Puedes usar este array para probar tu función:
 //!--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-const mixedElements = [6, 1, "Rayo", 1, "vallecano", "10", "upgrade", 8, "hub"];
+/*const mixedElements = [6, 1, "Rayo", 1, "vallecano", "10", "upgrade", 8, "hub"];
 
 const averageWord = (mixedElements) => {
   let numero = 0;
@@ -104,7 +104,7 @@ const averageWord = (mixedElements) => {
   return numero + letras;
 };
 let resultado3 = averageWord(mixedElements);
-console.log("🚀 ~ resultado3 :", resultado3);
+console.log("🚀 ~ resultado3 :", resultado3);*/
 
 //*-----------------------------------Iteración #6: Valores únicos------------------------------------
 
@@ -125,9 +125,28 @@ const duplicates = [
   "pasta",
   "soda",
 ];
-function removeDuplicates(param) {
-  // insert code
-}
+const removeDuplicates = (param) => {
+  const unicas = [];
+  for (let i = 0; i < duplicates.length; i++) {
+    if (!duplicates.includes(unicas[i]));
+    unicas.push(duplicates[i]); //------> si el valor en el índice i del array duplicates NO está presente en unicas
+  }
+  return unicas;
+  console.log("🚀 ~ removeDuplicates ~ unicas:", unicas);
+};
+let resultadosIteraciones6 = removeDuplicates(duplicates);
+console.log(resultadosIteraciones6);
+
+/* const new array =[]
+duplicates.foreach((item) =>{
+  if(!newArray.includes(item)) {
+    newArray.push(item)
+  }
+})
+
+console.log(newArray)
+
+*/
 
 //*-----------------------------------Iteración #7: Buscador de nombres------------------------------------
 
@@ -150,8 +169,13 @@ const nameFinder = [
   "Marc",
 ];
 function finderName(param) {
-  // insert code
-}
+nameFinder.forEach((item) =>{
+
+
+})
+   
+
+console.log(finderName);
 
 //*-----------------------------------Iteration #8: Contador de repeticiones------------------------------------
 
