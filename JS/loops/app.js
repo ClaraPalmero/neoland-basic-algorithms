@@ -152,3 +152,6 @@ for (let toys3 of toys2) {
   }
 }
 console.log(popularToys);
+
+
+
