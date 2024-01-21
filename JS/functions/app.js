@@ -128,8 +128,8 @@ const duplicates = [
 const removeDuplicates = (param) => {
   const unicas = [];
   for (let i = 0; i < duplicates.length; i++) {
-    if (!duplicates.includes(unicas[i]));
-    unicas.push(duplicates[i]); //------> si el valor en el índice i del array duplicates NO está presente en unicas
+    if (!duplicates.includes(unicas[i])); //------> si el valor en el índice i del array duplicates NO está presente en unicas
+    unicas.push(duplicates[i]);
   }
   return unicas;
   console.log("🚀 ~ removeDuplicates ~ unicas:", unicas);
@@ -155,6 +155,7 @@ console.log(newArray)
 //! Puedes usar este array para probar tu función:
 //!------------------------------------------------------------------------------------------------------------
 
+//!   NO ACABADA
 const nameFinder = [
   "Peter",
   "Steve",
@@ -168,14 +169,28 @@ const nameFinder = [
   "Jessica",
   "Marc",
 ];
-function finderName(param) {
-nameFinder.forEach((item) =>{
 
+/*const finderName = (array, name) => {
+  if (array.includes(name)) {
+    console.log(array.includes(name));
+    console.log(array.indexOf(name));
+  } else console.log("False");
+};
 
-})
-   
+finderName(nameFinder, "Marc");*/
 
-console.log(finderName);
+const finderName = (array, name) => {
+  //---> tenemos que buscar en un array los nombres
+  const comprobacion = array.includes(name); //---> el array tiene que incluir los nombres
+  if (comprobacion === true) {
+    //---> debemos darle una condición, si la comprobación nos da TRUE...
+    console.log(array.indexOf(name)); //---> ...nos mostrará su posición en el array
+  }
+  return console.log(comprobacion); //---> retornamos comprobación para que nos muestre si es true o false
+};
+
+finderName(nameFinder, "Marc");
+finderName(nameFinder, "Cris");
 
 //*-----------------------------------Iteration #8: Contador de repeticiones------------------------------------
 
@@ -196,6 +211,7 @@ const counterWords = [
   "upgrade",
   "code",
 ];
-function repeatCounter(param) {
+/*function repeatCounter(param) {
   // insert code
-}
+}}
+*/
