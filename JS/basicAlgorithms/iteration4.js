@@ -61,4 +61,4 @@ const rickAndMortyCharacters3 = [
 ];
 
 rickAndMortyCharacters3.splice(1, 1);
-console.log(rickAndMortyCharacters2);
+console.log(rickAndMortyCharacters3);

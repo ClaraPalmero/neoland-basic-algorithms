@@ -86,7 +86,7 @@ console.log(resultado2);
 //! Puedes usar este array para probar tu función:
 //!--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-/*const mixedElements = [6, 1, "Rayo", 1, "vallecano", "10", "upgrade", 8, "hub"];
+const mixedElements = [6, 1, "Rayo", 1, "vallecano", "10", "upgrade", 8, "hub"];
 
 const averageWord = (mixedElements) => {
   let numero = 0;
@@ -104,7 +104,7 @@ const averageWord = (mixedElements) => {
   return numero + letras;
 };
 let resultado3 = averageWord(mixedElements);
-console.log("🚀 ~ resultado3 :", resultado3);*/
+console.log("🚀 ~ resultado3 :", resultado3);
 
 //*-----------------------------------Iteración #6: Valores únicos------------------------------------
 
@@ -155,7 +155,6 @@ console.log(newArray)
 //! Puedes usar este array para probar tu función:
 //!------------------------------------------------------------------------------------------------------------
 
-//!   NO ACABADA
 const nameFinder = [
   "Peter",
   "Steve",
@@ -211,7 +210,28 @@ const counterWords = [
   "upgrade",
   "code",
 ];
-/*function repeatCounter(param) {
-  // insert code
-}}
-*/
+
+
+const repeatCounter = 
+
+const repeatCounter = (array, nombre) => {
+  const repeticionPalabras = array.includes(nombre);
+  if (repeticionPalabras === repeticionPalabras) {
+    console.log(array.reduce(nombre));
+    return repeticionPalabras;
+  }
+};
+
+counterWords.forEach((nombre) => {
+  if (nombre === nombre) {
+    console.log(counterWords);
+  }
+});
+
+/*duplicates.foreach((item) => {
+  if (!newArray.includes(item)) {
+    newArray.push(item);
+  }
+});
+
+console.log(newArray);*/

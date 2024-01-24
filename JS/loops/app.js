@@ -1,4 +1,4 @@
-//*--------------------------------Iteración #1: Usa includes----------------------------------------------------------
+/*//*--------------------------------Iteración #1: Usa includes----------------------------------------------------------
 
 //! Haz un bucle y muestra por consola todos aquellos valores del array que incluyan la palabra "Camiseta". Usa la función .***includes*** de javascript.
 
@@ -54,9 +54,7 @@ Para poder recorrer un array con objetos deberás, recorrerlo con un array y por
 //Pista a la hora de recorrer un array y poder meter en el objeto una nueva propiedad
 //deberás asignar a ese array por indice una propiedad tal que así
 
-nombreLista[indice].nombrePropiedad = valor;*/  
-
-
+nombreLista[indice].nombrePropiedad = valor;*/
 
 //*-----------------------------------Iteración #3: Probando For...of-----------------------------------------------------------------------
 
@@ -152,6 +150,3 @@ for (let toys3 of toys2) {
   }
 }
 console.log(popularToys);
-
-
-
