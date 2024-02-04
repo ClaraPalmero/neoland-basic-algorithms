@@ -15,7 +15,7 @@ dotenv.config(); // siempreee
 //! conectamos con la base de datos
 connect();
 
-//! --------------------- Configurar cloudinary ----------------------
+//? --------------------- Configurar cloudinary ----------------------
 const { configCloudinary } = require("./src/middleware/files.middleware");
 
 configCloudinary(); // cuando lo añades. lo de arriba se hace automáticamente
@@ -24,11 +24,11 @@ configCloudinary(); // cuando lo añades. lo de arriba se hace automáticamente
 
 const PORT = process.env.PORT;
 
-//! ----------------------- instalamos las CORS-----------------------
+//? ----------------------- instalamos las CORS-----------------------
 const cors = require("cors");
 app.use(cors());
 
-//! ------------------ limitaciones de cantidad en el back end
+//? ------------------ limitaciones de cantidad en el back end
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ limit: "5mb", extended: false }));
 

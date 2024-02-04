@@ -63,7 +63,7 @@ UserSchema.pre("save", async function (next) {
     next("Error hashing password", error);
   }
 });
-// de este esquema hay que crear un modelo (nombre dell modelo en mayusculas)
+// de este esquema hay que crear un modelo (nombre del modelo en mayusculas)
 const User = mongoose.model("User", UserSchema);
 // hago una exportación
 module.exports = User; // quien consume los modelos de datos? Los controladores.
