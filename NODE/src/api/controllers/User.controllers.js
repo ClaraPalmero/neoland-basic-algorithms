@@ -18,6 +18,7 @@ const {
   getTestEmailSend,
 } = require("../../state/state.data");
 const { generateToken } = require("../../utils/token");
+const randomPassword = require("../../utils/randomPassword");
 
 dotenv.config();
 
@@ -186,7 +187,7 @@ const register = async (req, res, next) => {
 //? ----------------------------REGISTER CON REDIRECT----------------------------
 //! -----------------------------------------------------------------------------
 const registerWithRedirect = async (req, res, next) => {
-  let catchImg = req.file?.path;
+  let catchImg = req.file?.path; // hacemos el catchImg pq los try catch tienen un scope de bloque, si lo ponemos fuera lo pudedem cojer los dos
   try {
     await User.syncIndexes();
     let confirmationCode = randomCode();
@@ -280,4 +281,294 @@ const sendCode = async (req, res, next) => {
   }
 };
 
-module.exports = { registerLargo, register, sendCode, registerWithRedirect };
+//! -----------------------------------------------------------------------------
+//? -----------------------RESEND CODE -----------------------------
+//! -----------------------------------------------------------------------------
+
+const resendCode = async (req, res, next) => {
+  // request, response
+  try {
+    //!---1--- vamos a configurar nodemailer porque tenemos que enviar un codigo
+    const email = process.env.EMAIL;
+    const password = process.env.PASSWORD;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: email,
+        pass: password,
+      },
+    });
+
+    //!---2--- hay que comprobar que el usuario exista porque si no existe no tiene sentido hacer ninguna verificación
+    const userExists = await User.findOne({ email: req.body.email }); // findOne es una query que busca. el e mail lo sacamos de req.body.email
+    //? --- si existe le damos las opciones ---
+    if (userExists) {
+      const mailOptions = {
+        from: email,
+        to: req.body.email,
+        subject: "Confirmation code",
+        text: `tu codigo es ${userExists.confirmationCode}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        // esta callback lo que analiza son los parámetros de error e info
+        if (error) {
+          // evaluamos el error
+          console.log(error);
+          return res.status(200).json({
+            // para ser correctos debemos poner un 404, pero en react puede dar error
+            resend: false,
+          });
+        } else {
+          // se ha admitido
+          console.log("Email sent: " + info.response);
+          return res.status(200).json({
+            resend: true,
+          });
+        }
+      });
+    } else {
+      return res.status(404).json("User not found"); // en caso de que no exista mandamos un 404 user not found
+    }
+  } catch (error) {
+    // casi siempre el catch general se lanza or el next
+    return next(setError(500, error.message || "Error general send code")); // lo traemos del helpers
+  }
+};
+
+//! ------------------------------------------------------------------------
+//? -------------------------- CHECK NEW USER------------------------------
+//! ------------------------------------------------------------------------
+
+const checkNewUser = async (req, res, next) => {
+  try {
+    //! nos traemos de la req.body el email y codigo de confirmation
+    const { email, confirmationCode } = req.body;
+
+    const userExists = await User.findOne({ email });
+
+    if (!userExists) {
+      //!No existe----> 404 de no se encuentra
+      return res.status(404).json("User not found");
+    } else {
+      // cogemos que comparamos que el codigo que recibimos por la req.body y el del userExists es igual
+      if (confirmationCode === userExists.confirmationCode) {
+        try {
+          await userExists.updateOne({ check: true });
+
+          // hacemos un testeo de que este user se ha actualizado correctamente, hacemos un findOne
+          const updateUser = await User.findOne({ email });
+
+          // este finOne nos sirve para hacer un ternario que nos diga si la propiedad vale true o false
+          return res.status(200).json({
+            testCheckOk: updateUser.check == true ? true : false,
+          });
+        } catch (error) {
+          return res.status(404).json(error.message); // mensaje que viende de mongo db
+        }
+      } else {
+        try {
+          /// En caso de equivocarse con el codigo lo borramos de la base datos y lo mandamos al registro
+          await User.findByIdAndDelete(userExists._id);
+
+          // borramos la imagen
+          deleteImgCloudinary(userExists.image);
+
+          // devolvemos un 200 y el test de ver si el delete se ha hecho correctamente, le decimos que el usuario está borrado
+          return res.status(200).json({
+            userExists,
+            check: false,
+            //* ---!--- esta manera de hacer un test son las mejores ---!--- haces un test para cada uno de los usuaios, es más potente.
+            // test en el runtime sobre la eliminacion de este user
+            delete: (await User.findById(userExists._id)) // buscame el usuario por -id, si lo encuentras, ha ahbido uin error en el usuario
+              ? "error delete user"
+              : "ok delete user", // si no lo encuentras bórralo
+          });
+        } catch (error) {
+          return res
+            .status(404)
+            .json(error.message || "error general delete user");
+        }
+      }
+    }
+  } catch (error) {
+    // siempre en el catch devolvemos un 500 con el error general
+    return next(setError(500, error.message || "General error check code"));
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? --------------------------------LOGIN ---------------------------------------
+//! -----------------------------------------------------------------------------
+
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body; // recibimos con el body el maiol y el psw
+    const userDB = await User.findOne({ email });
+
+    if (userDB) {
+      // compara dos contraseñar una sin encryptar y otra que si lo esta
+      if (bcrypt.compareSync(password, userDB.password)) {
+        const token = generateToken(userDB._id, email);
+        return res.status(200).json({
+          user: userDB,
+          token,
+        });
+      } else {
+        return res.status(404).json("password don't match");
+      }
+    } else {
+      return res.status(404).json("User no register");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? --------------------------------AUTOLOGIN -----------------------------------
+//*-- la diferencia con el login es que va a comparar 2 contraseñas encriptadas--
+//! -----------------------------------------------------------------------------
+
+const autoLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const userDB = await User.findOne({ email });
+
+    if (userDB) {
+      // comparo dos contraseñas encriptadas
+      if (password == userDB.password) {
+        const token = generateToken(userDB._id, email);
+        return res.status(200).json({
+          user: userDB,
+          token,
+        });
+      } else {
+        return res.status(404).json("password dont match");
+      }
+    } else {
+      return res.status(404).json("User no register");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? -----------------------CONTRASEÑAS Y SUS CAMBIOS-----------------------------
+//! -----------------------------------------------------------------------------
+
+//? -----------------------------------------------------------------------------
+//! ------------------CAMBIO DE CONTRASEÑA CUANDO NO ESTAS LOGADO----------------
+//* ----------------------------- es un redirect --------------------------------
+//* -necesitamos un test, si las constraseñas son iguales---> está actualizado --
+//? -----------------------------------------------------------------------------
+
+const changePassword = async (req, res, next) => {
+  try {
+    // vamos a recibir  por el body el email y vamos a comprobar que este user existe en la base de datos
+
+    const { email } = req.body;
+    console.log(req.body);
+    const userDb = await User.findOne({ email }); // comprobamos si existe el ususario con el email
+    if (userDb) {
+      /// si existe hacemos el redirect
+      const PORT = process.env.PORT;
+      return res.redirect(
+        307,
+        `http://localhost:${PORT}/api/v1/users/sendPassword/${userDb._id}`
+      );
+    } else {
+      return res.status(404).json("User no register");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const sendPassword = async (req, res, next) => {
+  try {
+    // VAMOS A BUSCAR AL USER POR EL ID DEL PARAM
+    const { id } = req.params;
+    const userDb = await User.findById(id);
+    const email = process.env.EMAIL;
+    const password = process.env.PASSWORD;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: email,
+        pass: password,
+      },
+    });
+
+    // genero el password y lo aoscio al email
+    let passwordSecure = randomPassword(); // es otro archivo en utils
+    console.log(passwordSecure);
+    const mailOptions = {
+      from: email,
+      to: userDb.email,
+      subject: "-----",
+      //!----!!!--- recordar no poner la palabra contraseñ ao password en el texto o gmail lo borra -----
+      text: `User: ${userDb.name}. Your new code login is ${passwordSecure} Hemos enviado esto porque tenemos una solicitud de cambio de contraseña, si no has sido ponte en contacto con nosotros, gracias.`,
+    };
+    transporter.sendMail(mailOptions, async function (error, info) {
+      if (error) {
+        // si hay un error mando un 404
+        console.log(error);
+        return res.status(404).json("dont send email and dont update user");
+      } else {
+        // si no hay ningún error compruebo si la contraseña que se ha actualizado la guardamos en momgo db
+        console.log("Email sent: " + info.response);
+        //guardamos esta contraseña en mongo db encriptada
+
+        // ---1--- encriptamos la contraseña con hashSync de dcrypt
+        const newPasswordBcrypt = bcrypt.hashSync(passwordSecure, 10);
+
+        try {
+          /** este metodo te lo busca por id y luego modifica las claves que le digas
+           * en este caso le decimos que en la parte de password queremos meter la contraseña hasheada
+           */
+          await User.findByIdAndUpdate(id, { password: newPasswordBcrypt });
+
+          //!----------------------- test --------------------------------------------
+          // vuelvo a buscar el user pero ya actualizado
+          const userUpdatePassword = await User.findById(id);
+
+          // hago un compare sync ----> comparo una contraseña no encriptada con una encriptada
+          // -----> userUpdatePassword.password ----> encriptada (la que está en el backend guardada)
+          // -----> passwordSecure -----> contraseña no encriptada (la que he generado)
+          if (bcrypt.compareSync(passwordSecure, userUpdatePassword.password)) {
+            // si son iguales quiere decir que el back se ha actualizado correctamente
+            return res.status(200).json({
+              updateUser: true,
+              sendPassword: true,
+            });
+          } else {
+            // si no son iguales le diremos que hemos enviado el correo pero que no hemos actualizado el user del back en mongo db
+            return res.status(404).json({
+              updateUser: false, // pq no la ha actualizado
+              sendPassword: true,
+            });
+          }
+        } catch (error) {
+          return res.status(404).json(error.message); // cuando es un return tengo que mandar el error.message, en cambio en el next NO
+        }
+      }
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports = {
+  registerLargo,
+  register,
+  sendCode,
+  registerWithRedirect,
+  resendCode,
+  checkNewUser,
+  login,
+  autoLogin,
+  changePassword,
+  sendPassword,
+};

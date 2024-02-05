@@ -10,7 +10,7 @@ const generateToken = (id, email) => {
     throw new Error("Email or id are missing");
   }
   // Utilizamos sign para registranos y le añadimos la expiracion de 1d
-  return jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  return jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: "1d" }); // atención al id, va sin _
 };
 
 const verifyToken = (token) => {
