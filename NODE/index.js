@@ -33,8 +33,14 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ limit: "5mb", extended: false }));
 
 //! -----------------> RUTAS
-const UserRoutes = require("./src/api/routes/User.routes");
-app.use("/api/v1/users/", UserRoutes);
+const UserRoutes = require("./src/api/routes/User.routes"); // llamamos a la ruta
+app.use("/api/v1/users/", UserRoutes); // exportacion de los controladores
+
+const SupermercadoRoutes = require("./src/api/routes/Supermercado.routes");
+app.use("/api/v1/supermercado/", SupermercadoRoutes);
+
+const ProductosRoutes = require("./src/api/routes/Productos.routes");
+app.use("/api/v1/productos/", ProductosRoutes); // contiene todas las rutas
 
 //! -------------------> generamos un error de cuando no see encuentre la ruta
 app.use("*", (req, res, next) => {
