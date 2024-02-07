@@ -19,6 +19,8 @@ const {
 } = require("../../state/state.data");
 const { generateToken } = require("../../utils/token");
 const randomPassword = require("../../utils/randomPassword");
+const setError = require("../../helpers/handle-error");
+const enumOk = require("../../utils/enumOk");
 
 dotenv.config();
 
@@ -42,7 +44,7 @@ const registerLargo = async (req, res, next) => {
      */
 
     /** sincronizamos los index de los elementos unique */
-    await User.syncIndexes(); // actualización de index, esperas una respuesta del back analiza los indexes de users para ver los datos actualozados del baack
+    await User.syncIndexes(); // actualización de index, esperas una respuesta del back analiza los indexes de users para ver los datos actualizados del back
     let confirmationCode = randomCode();
     const { email, name } = req.body; // lo que enviamos por la parte del body de la request
 
@@ -54,7 +56,7 @@ const registerLargo = async (req, res, next) => {
     );
 
     if (!userExist) {
-      //! -------------LO REGISTRAMOS PORQUE NO HAY COINCIDENCIAS CON UN USER INTERNO
+      //! -------------LO REGISTRAMOS PORQUE NO HAY COINCIDENCIAS CON UN USER INTERNO--------------
       const newUser = new User({ ...req.body, confirmationCode }); // instanciamos y ya se nos crea un _id, lo crea mongoose con la libreria de mongo db
 
       // una vez hecho esto ya tenemos el _id del user
@@ -187,7 +189,7 @@ const register = async (req, res, next) => {
 //? ----------------------------REGISTER CON REDIRECT----------------------------
 //! -----------------------------------------------------------------------------
 const registerWithRedirect = async (req, res, next) => {
-  let catchImg = req.file?.path; // hacemos el catchImg pq los try catch tienen un scope de bloque, si lo ponemos fuera lo pudedem cojer los dos
+  let catchImg = req.file?.path; // hacemos el catchImg pq los try catch tienen un scope de bloque, si lo ponemos fuera lo pude cojer los dos
   try {
     await User.syncIndexes();
     let confirmationCode = randomCode();
@@ -208,7 +210,7 @@ const registerWithRedirect = async (req, res, next) => {
         const PORT = process.env.PORT;
         if (userSave) {
           return res.redirect(
-            307,
+            303,
             `http://localhost:${PORT}/api/v1/users/register/sendMail/${userSave._id}`
           );
         }
@@ -745,10 +747,11 @@ const update = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   try {
-    const { _id, image } = req.user;
+    const { _id, image } = req.user; //
     await User.findByIdAndDelete(_id);
     if (await User.findById(_id)) {
-      // si el usuario
+      // hacemos un testing para ver si se ha borrado el user
+      // si el usuario sigue existiendo, si es así es que no se ha borrado
       return res.status(404).json("not deleted");
     } else {
       deleteImgCloudinary(image);

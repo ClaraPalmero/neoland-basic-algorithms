@@ -8,6 +8,7 @@ dotenv.config();
 const isAuth = async (req, res, next) => {
   // como es un token de tipo bearer le quitamos el prefijo para poder utlizarlo
   const token = req.headers.authorization?.replace("Bearer ", "");
+  console.log(req.headers);
   // si no hay token  le lanzamos un error
   if (!token) {
     return next(new Error("Unauthorized")); // LO GUARDAMOS (NEXT)
