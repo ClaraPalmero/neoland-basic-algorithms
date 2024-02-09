@@ -8,6 +8,7 @@ const SupermercadoSchema = new mongoose.Schema(
     image: { type: String, required: true, trim: true, unique: true },
     productos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Productos" }],
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }],
   },
 
   { timestamps: true }

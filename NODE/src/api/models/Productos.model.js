@@ -11,8 +11,9 @@ const ProductosSchema = new mongoose.Schema(
     price: { type: Number, trim: true, required: true },
     image: { type: String, required: true, trim: true, unique: true },
     brand: { type: String, required: true, trim: true },
-    Supermercado: [{ type: mongoose.Schema.Types.ObjectId, ref: "Productos" }],
+    supermercado: [{ type: mongoose.Schema.Types.ObjectId, ref: "Productos" }],
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }],
   },
 
   {
