@@ -14,7 +14,7 @@ let firstName = "Jon";
 let lastName = "Snow";
 let age = 24;
 console.log(
-  "Soy ${firstName}${flastName} tengo ${age} años y me gustan los lobos."
+`Soy ${firstName} ${lastName} tengo ${age} años y me gustan los lobos.`
 );
 
 //! 1.3 Dado el siguiente javascript, imprime con un console.log la suma del precio de ambos juguetes.
@@ -30,7 +30,7 @@ console.log(suma);
 //! ------------------------------------------------------------------------------------------------------------------------------------------------
 
 let globalBasePrice = 10000;
-car1 = { name: "BMW m&m", basePrice: 50000, finalPrice: 60000 };
+const car1 = { name: "BMW m&m", basePrice: 50000, finalPrice: 60000 };
 const car2 = { name: "Chevrolet Corbina", basePrice: 70000, finalPrice: 80000 };
 
 globalBasePrice = 25000;
